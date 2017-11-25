@@ -53,67 +53,6 @@ void place(char map[n][m],struct pacman *temp_pac){
 	}
 }
 
-int find_score(char map[n][m],int score,struct pacman *temp_pac,struct ghost *temp_blinky,struct ghost *temp_pinky,struct ghost *temp_clyde,struct ghost *temp_inky){
-	//food
-	switch(map[(*temp_pac).current_x][(*temp_pac).current_y]){
-		case '*' : score++; map[(*temp_pac).current_x][(*temp_pac).current_y]='_'; break;//cheese
-		case '^': score+=20; map[(*temp_pac).current_x][(*temp_pac).current_y]='_'; break;//cherry
-		case 'O':map[(*temp_pac).current_x][(*temp_pac).current_y]='_'; (*temp_blinky).situation=0 ; (*temp_blinky).run_time=10 ; (*temp_pinky).situation=0 ; (*temp_pinky).run_time=10 ;
-		(*temp_clyde).situation=0 ; (*temp_clyde).run_time=10 ; (*temp_inky).situation=0 ; (*temp_inky).run_time=10 ; break;//pinapple
-		case '_':break;
-			}
-	//running ghosts
-	if ((*temp_blinky).situation==0 && (*temp_blinky).current_x==(*temp_pac).current_x && (*temp_blinky).current_y==(*temp_pac).current_y){
-		score+=50;
-		//TODO blinky_x=blinky_st_x & blinky_y=blinkt_st_y
-	}
-	if ((*temp_pinky).situation==0 && (*temp_pinky).current_x==(*temp_pac).current_x && (*temp_pinky).current_y==(*temp_pac).current_y){
-		score+=50;
-		//TODO pinky_x=pinky_st_x & pinky_y=pinky_st_y
-	}
-	if ((*temp_clyde).situation==0 && (*temp_clyde).current_x==(*temp_pac).current_x && (*temp_clyde).current_y==(*temp_pac).current_y){
-		score+=50;
-		//TODO clyde_x=clyde_st_x & clyde_y=clyde_st_y
-	}
-	if ((*temp_inky).situation==0 && (*temp_inky).current_x==(*temp_pac).current_x && (*temp_inky).current_y==(*temp_pac).current_y){
-		score+=50;
-		//TODO inky_x=inky_st_x & inky_y=inky_st_y
-	}
-	//attacking ghosts
-	if ((*temp_blinky).situation==1 && (*temp_blinky).current_x==(*temp_pac).current_x && (*temp_blinky).current_y==(*temp_pac).current_y && (*temp_pac).heart!=0){
-		(*temp_pac).heart--;
-		(*temp_pac).current_x=(*temp_pac).first_x;
-		(*temp_pac).current_y=(*temp_pac).first_y;
-	}
-	if ((*temp_pinky).situation==1 && (*temp_pinky).current_x==(*temp_pac).current_x && (*temp_pinky).current_y==(*temp_pac).current_y && (*temp_pac).heart!=0){
-		(*temp_pac).heart--;
-		(*temp_pac).current_x=(*temp_pac).first_x;
-		(*temp_pac).current_y=(*temp_pac).first_y;
-	}
-	if ((*temp_clyde).situation==1 && (*temp_clyde).current_x==(*temp_pac).current_x && (*temp_clyde).current_y==(*temp_pac).current_y && (*temp_pac).heart!=0){
-		(*temp_pac).heart--;
-		(*temp_pac).current_x=(*temp_pac).first_x;
-		(*temp_pac).current_y=(*temp_pac).first_y;
-	}
-	if ((*temp_inky).situation==1 && (*temp_inky).current_x==(*temp_pac).current_x && (*temp_inky).current_y==(*temp_pac).current_y && (*temp_pac).heart!=0){
-		(*temp_pac).heart--;
-		(*temp_pac).current_x=(*temp_pac).first_x;
-		(*temp_pac).current_y=(*temp_pac).first_y;
-	}
-	return score;	
-}
-
-int winning(char map[n][m],struct pacman *temp_pac){
-	int i,j;
-	if ((*temp_pac).heart==0)
-		return 0;
-	for (i=0 ; i<n ; i++)
-		for (j=0 ; j<m ; j++)
-			if (map[i][j]=='*' ||map[i][j]=='O')
-				return 0;
-	return 1;
-}
-	
 
 
 
@@ -165,16 +104,7 @@ int main(int argc, char *argv[]) {
 	
 	if (pac.heart!=0)
 		place(main_map,&pac);
-	main_score=find_score(main_map,main_score,&pac,&blinky,&pinky,&clyde,&inky);
-	int result;
-	result=winning(main_map,&pac);
-	printf("(%d,%d)\n",pac.current_x,pac.current_y);
-	printf("%d\n",main_score);
-	if (result==1)
-	printf("Yes");
-	else 
-	printf("No");
-
+	
 	
 
 	return 0;
