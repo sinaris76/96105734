@@ -103,6 +103,18 @@ int find_score(char map[n][m],int score,struct pacman *temp_pac,struct ghost *te
 	return score;	
 }
 
+int winning(char map[n][m],struct pacman *temp_pac){
+	int i,j;
+	if ((*temp_pac).heart==0)
+		return 0;
+	for (i=0 ; i<n ; i++)
+		for (j=0 ; j<m ; j++)
+			if (map[i][j]=='*' ||map[i][j]=='O')
+				return 0;
+	return 1;
+}
+	
+
 
 
 int main(int argc, char *argv[]) {
@@ -154,7 +166,15 @@ int main(int argc, char *argv[]) {
 	if (pac.heart!=0)
 		place(main_map,&pac);
 	main_score=find_score(main_map,main_score,&pac,&blinky,&pinky,&clyde,&inky);
-	
+	int result;
+	result=winning(main_map,&pac);
+	printf("(%d,%d)\n",pac.current_x,pac.current_y);
+	printf("%d\n",main_score);
+	if (result==1)
+	printf("Yes");
+	else 
+	printf("No");
+
 	
 
 	return 0;
