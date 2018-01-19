@@ -34,6 +34,56 @@ void edge(const Map* map ,vertics *vertic){
         }
 }
 
+Direction BFS(const Map *map ,vertics *vertic ,int start,int end){
+    int queue[map->width*map->height];
+    int i=0;
+    for (i=0 ; i<(map->width*map->height) ; i++)
+        queue[i]=-1;
+    i=1;
+    queue[0]=start;
+    int front=0;
+    vertic[queue[front]].visit=true;
+    vertic[queue[front]].level=0;
+    while (queue[front]!=-1){
+        int k;
+        for (k=0 ; k<=3 ; k++){
+            int tmp=vertic[queue[front]].adjanency_list[k];
+            if (tmp!=-1 && vertic[tmp].visit==false){
+                vertic[tmp].visit=true;
+                vertic[tmp].level=vertic[queue[front]].level+1;
+                //we store the first place we should go in order to be in this way to the end
+                if (vertic[tmp].level==1)
+                    vertic[tmp].start=tmp;
+                else
+                    vertic[tmp].start=vertic[queue[front]].start;
+                if (tmp==end)
+                    break;
+                queue[i]=tmp;
+                i++;
+            }
+        }
+        front++;
+    }
+    int end_x,end_y,start_x,start_y;
+    end_x=(vertic[end].start)%map->width;
+    end_y=((vertic[end].start)-end_x)/map->width;
+    start_x=start%map->width;
+    start_y=(start-start_x)/map->width;
+    if (start_x==end_x){   //up & down
+        if(end_y==(start_y+1)%map->height)
+            return DIR_DOWN;
+        else if(end_y==(start_y-1+map->height)%map->height)
+            return DIR_UP;
+    }
+    else if (start_y==end_y) {    //right & left
+        if (end_x == (start_x + 1) % map->width)
+            return DIR_RIGHT;
+        else if (end_x == (start_x - 1 + map->width) % map->width)
+            return DIR_LEFT;
+    }
+
+}
+
 
 
 Direction decidePacman(const Map* map, Pacman* pacman, Action action) {
