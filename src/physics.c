@@ -117,7 +117,77 @@ int pinky_end(const Map* map,Ghost *ghost ,Pacman *pacman){
     return end;
 }
 
+Direction decideGhost(const Map* map, Ghost* ghost, Pacman* pacman,Ghost* Blinky){
+    vertics vertic[map->width*map->height];
+    edge(map,vertic);
+    int start, end;
+    int check=0;
+    start=(int)ghost->y*map->width +(int) ghost->x;
+    if (ghost->blue==true)
+        end=(ghost->startY)*(map->width)+ghost->startX;
+    else{
+        if (ghost->type==BLINKY)
+            end=(int)pacman->y*map->width+ (int)pacman->x;
+        else if (ghost->type==PINKY){
+            end=pinky_end(map,ghost,pacman);
+        }
+        else if (ghost->type==CLYDE){
+            double distance_x,distance_y,distance;
+            distance_x=pacman->x-ghost->x;
+            distance_y=pacman->y-ghost->y;
+            distance=sqrt(pow(distance_x,2)+pow(distance_y,2));
+            if (distance>8)
+                end=(int)pacman->y*map->width+ (int)pacman->x;
+            else{
+                if (map->cells[0][map->height-1]!=CELL_BLOCK)
+                    end=(map->height-1)*map->width;
+                else
+                    check=1;
+            }
+        }
+        else if (ghost->type==INKY){
+            int center_x,center_y,end_x,end_y;
+            if (pacman->dir==DIR_RIGHT){
+                center_y=(int)pacman->y;
+                center_x=((int)pacman->x+2)%map->width;
+            }
+            else if (pacman->dir==DIR_LEFT){
+                center_y=(int)pacman->y;
+                center_x=((int)pacman->x-2+map->width)%map->width;
+            }
+            else if (pacman->dir==DIR_UP){
+                center_x=(int)pacman->x;
+                center_y=((int)pacman->y-2+map->height)%map->height;
+            }
+            else {
+                center_x=(int)pacman->x;
+                center_y=((int)pacman->y+2)%map->height;
+            }
+            end_x=(2*center_x-(int)Blinky->x)%map->width;
+            end_y=(2*center_y-(int)Blinky->y)%map->height;
+            if (map->cells[end_x][end_y]!=CELL_BLOCK)
+                end=end_y*map->width+end_x;
+            else
+                check=1;
+        }
+    }
 
+    if (check==1 || end==start){
+        int x;
+        x=(rand()%(4))+1;
+        if (x==DIR_DOWN && map->cells[(int)ghost->x][(int)(ghost->y+1)%map->height]!=CELL_BLOCK)
+            return DIR_DOWN;
+        else if (x==DIR_UP && map->cells[(int)ghost->x][(int)(ghost->y-1+map->height)%map->height]!=CELL_BLOCK)
+            return DIR_UP;
+        else if (x==DIR_RIGHT && map->cells[(int)(ghost->x+1)%map->width][(int)ghost->y]!=CELL_BLOCK)
+            return DIR_RIGHT;
+        else if (x==DIR_LEFT && map->cells[(int)(ghost->x-1+map->width)%map->width][(int)ghost->y]!=CELL_BLOCK)
+            return DIR_LEFT;
+        else
+            return DIR_NONE;
+    }
+    return   BFS(map,vertic,start,end);
+}
 
 Direction decidePacman(const Map* map, Pacman* pacman, Action action) {
     if (action==ACTION_UP ) {
