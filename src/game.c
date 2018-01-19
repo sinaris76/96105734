@@ -51,7 +51,6 @@ void initiateGame(char* filename, Map* outMap, Game* outGame, Pacman* outPacman,
         }
         outGhosts[i].speed=GHOST_DEFAULT_SPEED;
     }
-
 }
 
 void checkEatables(Map* map, Game* outGame, Pacman* outPacman, Ghost* outGhosts) {
@@ -117,7 +116,7 @@ void checkGhostCollision(Pacman* outPacman, Ghost* outGhost) {
     distance_y = outPacman->y - outGhost->y ;
     double distance;
     distance=sqrt((pow(distance_x,2))+(pow(distance_y,2)));
-    if (distance<1){
+    if (distance<0.8){
         if (outGhost->blue==1){
             outGhost->blue=0;
             outGhost->x = (double)outGhost->startX;

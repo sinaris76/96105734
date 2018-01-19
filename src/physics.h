@@ -11,5 +11,21 @@
 Direction decidePacman(const Map* map, Pacman* pacman, Action action);
 
 // TO WRITE
-Direction decideGhost(const Map* map, Ghost* ghost);
+Direction decideGhost(const Map* map, Ghost* ghost,Pacman* pacman,Ghost* Blinky);
 #endif
+//me writing
+typedef struct {
+    int adjanency_list[4];
+    int level;
+    bool visit;
+    int start;
+
+}vertics;
+
+void edge(const Map* map ,vertics *vertic);
+
+Direction BFS(const Map *map ,vertics *vertic ,int start,int end);
+
+int pinky_end(const Map* map,Ghost *ghost ,Pacman *pacman);
+
+
