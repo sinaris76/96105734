@@ -3,25 +3,38 @@
 #include <stdlib.h>
 #include "map.h"
 #include "game.h"
+#include <math.h>
+#include <stdio.h>
 
-Direction decideGhost(const Map* map, Ghost* ghost) {
-    int x;
-    x=(rand()%(5));
-    if (x==0)
-        return DIR_NONE;
-    else if (x==DIR_DOWN && map->cells[(int)ghost->x][(int)(ghost->y+1)%map->height]!=CELL_BLOCK)
-        return DIR_DOWN;
-    else if (x==DIR_UP && map->cells[(int)ghost->x][(int)(ghost->y-1+map->height)%map->height]!=CELL_BLOCK)
-        return DIR_UP;
-    else if (x==DIR_RIGHT && map->cells[(int)(ghost->x+1)%map->width][(int)ghost->y]!=CELL_BLOCK)
-        return DIR_RIGHT;
-    else if (x==DIR_LEFT && map->cells[(int)(ghost->x-1+map->width)%map->width][(int)ghost->y]!=CELL_BLOCK)
-        return DIR_LEFT;
-    else
-        decideGhost(map,ghost);
-
-
+void edge(const Map* map ,vertics *vertic){
+    int i=0,j=0,k=0;
+    for (i=0 ; i<map->width ; i++)
+        for (j=0 ; j<map->height ; j++){
+            vertic[j*map->width+i].visit=false;
+            vertic[j*map->width+i].level=-1;
+            if (map->cells[(i+1)%map->width][j]!= CELL_BLOCK){     //right
+                vertic[j*map->width + i].adjanency_list[k]=j*map->width + ((i+1)%map->width);
+                k++;
+            }
+            if (map->cells[(i-1+map->width)%map->width][j]!= CELL_BLOCK){    //left
+                vertic[j*map->width + i].adjanency_list[k]=j*map->width + ((i-1+map->width)%map->width);
+                k++;
+            }
+            if (map->cells[i][(j-1+map->height)%map->height]!= CELL_BLOCK){    //up
+                vertic[j*map->width + i].adjanency_list[k]=((j-1+map->height)%map->height)*map->width + i;
+                k++;
+            }
+            if (map->cells[i][(j+1)%map->height]!= CELL_BLOCK){    //down
+                vertic[j*map->width + i].adjanency_list[k]=((j+1)%map->height)*map->width + i;
+                k++;
+            }
+            for ( ; k<=3 ; k++)
+                vertic[j*map->width + i].adjanency_list[k]=-1;
+            k=0;
+        }
 }
+
+
 
 Direction decidePacman(const Map* map, Pacman* pacman, Action action) {
     if (action==ACTION_UP ) {
