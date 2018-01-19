@@ -84,6 +84,39 @@ Direction BFS(const Map *map ,vertics *vertic ,int start,int end){
 
 }
 
+int pinky_end(const Map* map,Ghost *ghost ,Pacman *pacman){
+    int end;
+    if(pacman->dir==DIR_RIGHT){
+        int k;
+        for (k=1 ; k<=4 ; k++)
+            if (map->cells[((int)pacman->x+k+map->width)%map->width][(int)pacman->y]==CELL_BLOCK)
+                break;
+        end=(int)pacman->y*map->width+((int)pacman->x+k-1+map->width)%map->width;
+    }
+    else if (pacman->dir==DIR_LEFT){
+        int k;
+        for (k=1 ; k<=4 ; k++)
+            if (map->cells[((int)pacman->x-k+map->width)%map->width][(int)pacman->y]==CELL_BLOCK)
+                break;
+        end=(int)pacman->y*map->width+((int)pacman->x-k+1+map->width)%map->width;
+    }
+    else if (pacman->dir==DIR_UP){
+        int k;
+        for (k=1 ; k<=4 ; k++)
+            if (map->cells[(int)pacman->x][((int)pacman->y-k+map->height)%map->height]==CELL_BLOCK)
+                break;
+        end=(((int)pacman->y-k+1+map->height)%map->height)*map->width+(int)pacman->x;
+    }
+    else if (pacman->dir==DIR_DOWN){
+        int k;
+        for (k=1 ; k<=4 ; k++)
+            if (map->cells[(int)pacman->x][((int)pacman->y+k+map->height)%map->height]==CELL_BLOCK)
+                break;
+        end=(((int)pacman->y+k-1+map->height)%map->height)*map->width+(int)pacman->x;
+    }
+    return end;
+}
+
 
 
 Direction decidePacman(const Map* map, Pacman* pacman, Action action) {
