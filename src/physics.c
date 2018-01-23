@@ -135,7 +135,7 @@ Direction decideGhost(const Map* map, Ghost* ghost, Pacman* pacman,Ghost* Blinky
             double distance_x,distance_y,distance;
             distance_x=pacman->x-ghost->x;
             distance_y=pacman->y-ghost->y;
-            distance=sqrt(pow(distance_x,2)+pow(distance_y,2));
+            distance=abs((int)distance_x)+abs((int)distance_y);
             if (distance>8)
                 end=(int)pacman->y*map->width+ (int)pacman->x;
             else{
