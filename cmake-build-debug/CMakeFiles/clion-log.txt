@@ -1,0 +1,4 @@
+C:\Users\mahsa\.CLion2017.2\system\cygwin_cmake\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /cygdrive/c/Users/mahsa/Desktop/project_pacman
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /cygdrive/c/Users/mahsa/Desktop/project_pacman/cmake-build-debug
