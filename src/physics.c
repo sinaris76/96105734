@@ -149,7 +149,7 @@ Direction decideGhost(const Map* map, Ghost* ghost, Pacman* pacman,Ghost* Blinky
             int center_x,center_y,end_x,end_y;
             if (pacman->dir==DIR_RIGHT){
                 center_y=(int)pacman->y;
-                center_x=((int)pacman->x+2)%map->width;
+                center_x=((int)pacman->x+2+map->width)%map->width;
             }
             else if (pacman->dir==DIR_LEFT){
                 center_y=(int)pacman->y;
@@ -161,42 +161,43 @@ Direction decideGhost(const Map* map, Ghost* ghost, Pacman* pacman,Ghost* Blinky
             }
             else {
                 center_x=(int)pacman->x;
-                center_y=((int)pacman->y+2)%map->height;
+                center_y=((int)pacman->y+2+map->height)%map->height;
             }
-            end_x=(2*center_x-(int)Blinky->x)%map->width;
-            end_y=(2*center_y-(int)Blinky->y)%map->height;
+            end_x=(2*center_x-(int)Blinky->x+map->width)%map->width;
+            end_y=(2*center_y-(int)Blinky->y+map->height)%map->height;
             if (map->cells[end_x][end_y]!=CELL_BLOCK)
                 end=end_y*map->width+end_x;
-            else
-                check=1;
+            else{
+                check=1;}
         }
     }
 
     if (check==1 || end==start){
-        int x;
-        x=(rand()%(4))+1;
-        if (x==DIR_DOWN && map->cells[(int)ghost->x][(int)(ghost->y+1)%map->height]!=CELL_BLOCK)
+        static int x[4]={1,1,1,1};
+        while(1){
+        x[ghost->type]=x[ghost->type]%4+1;
+        if (x[ghost->type]-1==DIR_DOWN && map->cells[(int)ghost->x][(int)(ghost->y+1)%map->height]!=CELL_BLOCK)
             return DIR_DOWN;
-        else if (x==DIR_UP && map->cells[(int)ghost->x][(int)(ghost->y-1+map->height)%map->height]!=CELL_BLOCK)
+        else if (x[ghost->type]-1==DIR_UP && map->cells[(int)ghost->x][ghost->y>0?(int)(ghost->y-1+map->height)%map->height:map->height-1]!=CELL_BLOCK)
             return DIR_UP;
-        else if (x==DIR_RIGHT && map->cells[(int)(ghost->x+1)%map->width][(int)ghost->y]!=CELL_BLOCK)
+        else if (x[ghost->type]-1==DIR_RIGHT && map->cells[(int)(ghost->x+1)%map->width][(int)ghost->y]!=CELL_BLOCK)
             return DIR_RIGHT;
-        else if (x==DIR_LEFT && map->cells[(int)(ghost->x-1+map->width)%map->width][(int)ghost->y]!=CELL_BLOCK)
+        else if (x[ghost->type]-1==DIR_LEFT && map->cells[ghost->x>0?(int)(ghost->x-1+map->width)%map->width:map->width-1][(int)ghost->y]!=CELL_BLOCK)
             return DIR_LEFT;
         else
-            return DIR_NONE;
+            continue;}
     }
     return   BFS(map,vertic,start,end);
 }
 
 Direction decidePacman(const Map* map, Pacman* pacman, Action action) {
     if (action==ACTION_UP ) {
-         if ( map->cells[(int) pacman->x][(int) (pacman->y - 1 + map->height) % map->height] != CELL_BLOCK)
+         if ( map->cells[(int) pacman->x][pacman->y>0?(int)(pacman->y-1) + map->height % map->height:map->height-1] != CELL_BLOCK)
              return DIR_UP;
          else{
              if (pacman->dir==DIR_DOWN && map->cells[(int)pacman->x][(int)(pacman->y+1)%map->height]!=CELL_BLOCK)
                  return DIR_DOWN;
-             else if (pacman->dir==DIR_LEFT && map->cells[(int)(pacman->x-1+map->width)%map->width][(int)pacman->y]!=CELL_BLOCK)
+             else if (pacman->dir==DIR_LEFT && map->cells[pacman->x>0?(int)(pacman->x-1+map->width)%map->width:map->width-1][(int)pacman->y]!=CELL_BLOCK)
                  return DIR_LEFT;
              else if (pacman->dir==DIR_RIGHT && map->cells[(int)(pacman->x+1)%map->width][(int)pacman->y]!=CELL_BLOCK)
                  return DIR_RIGHT;
@@ -208,9 +209,9 @@ Direction decidePacman(const Map* map, Pacman* pacman, Action action) {
          if ( map->cells[(int)pacman->x][(int)(pacman->y+1)%map->height]!=CELL_BLOCK)
              return DIR_DOWN;
          else{
-             if (pacman->dir==DIR_UP && map->cells[(int)pacman->x][(int)(pacman->y-1+map->height)%map->height]!=CELL_BLOCK)
+             if (pacman->dir==DIR_UP && map->cells[(int)pacman->x][pacman->y>0?(int)(pacman->y-1+map->height)%map->height:map->height-1]!=CELL_BLOCK)
                  return DIR_UP;
-             else if (pacman->dir==DIR_LEFT && map->cells[(int)(pacman->x-1+map->width)%map->width][(int)pacman->y]!=CELL_BLOCK)
+             else if (pacman->dir==DIR_LEFT && map->cells[pacman->x>0?(int)(pacman->x-1+map->width)%map->width:map->width-1][(int)pacman->y]!=CELL_BLOCK)
                  return DIR_LEFT;
              else if (pacman->dir==DIR_RIGHT && map->cells[(int)(pacman->x+1)%map->width][(int)pacman->y]!=CELL_BLOCK)
                  return DIR_RIGHT;
@@ -219,10 +220,10 @@ Direction decidePacman(const Map* map, Pacman* pacman, Action action) {
              }
     }
     else if (action==ACTION_LEFT ){
-        if (map->cells[(int)(pacman->x-1+map->width)%map->width][(int)pacman->y]!=CELL_BLOCK)
+        if (map->cells[pacman->x>0?(int)(pacman->x-1)+map->width%map->width:map->width-1][(int)pacman->y]!=CELL_BLOCK)
             return DIR_LEFT;
         else{
-            if (pacman->dir==DIR_UP && map->cells[(int)pacman->x][(int)(pacman->y-1+map->height)%map->height]!=CELL_BLOCK)
+            if (pacman->dir==DIR_UP && map->cells[(int)pacman->x][pacman->y>0?(int)(pacman->y-1) + map->height % map->height:map->height-1]!=CELL_BLOCK)
                 return DIR_UP;
             else if (pacman->dir==DIR_DOWN && map->cells[(int)pacman->x][(int)(pacman->y+1)%map->height]!=CELL_BLOCK)
                 return DIR_DOWN;
@@ -236,11 +237,11 @@ Direction decidePacman(const Map* map, Pacman* pacman, Action action) {
         if (map->cells[(int)(pacman->x+1)%map->width][(int)pacman->y]!=CELL_BLOCK)
             return DIR_RIGHT;
         else{
-            if (pacman->dir==DIR_UP && map->cells[(int)pacman->x][(int)(pacman->y-1+map->height)%map->height]!=CELL_BLOCK)
+            if (pacman->dir==DIR_UP && map->cells[(int)pacman->x][pacman->y>0?(int)(pacman->y-1) + map->height % map->height:map->height-1]!=CELL_BLOCK)
                 return DIR_UP;
             else if (pacman->dir==DIR_DOWN && map->cells[(int)pacman->x][(int)(pacman->y+1)%map->height]!=CELL_BLOCK)
                 return DIR_DOWN;
-            else if (pacman->dir==DIR_LEFT && map->cells[(int)(pacman->x-1+map->width)%map->width][(int)pacman->y]!=CELL_BLOCK)
+            else if (pacman->dir==DIR_LEFT && map->cells[pacman->x>0?(int)(pacman->x-1+map->width)%map->width:map->width-1][(int)pacman->y]!=CELL_BLOCK)
                 return DIR_LEFT;
             else
                 return DIR_NONE;

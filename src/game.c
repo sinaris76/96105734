@@ -57,28 +57,28 @@ void checkEatables(Map* map, Game* outGame, Pacman* outPacman, Ghost* outGhosts)
     int a,b;
     int temp=0;
     if (outPacman->dir==DIR_UP){
-        if (outPacman->y-(int)(outPacman->y)<0.4){
+        if (outPacman->y-(int)(outPacman->y)<0.3){
             a = (int) outPacman->x;
             b = (int) outPacman->y;
             temp = 1;
         }
     }
     else if (outPacman->dir==DIR_DOWN){
-        if ((int)outPacman->y+1-outPacman->y<0.4){
+        if ((int)outPacman->y-outPacman->y<0.3){
             a = (int) outPacman->x;
-            b = (int) (outPacman->y+1)%map->height;
+            b = (int) (outPacman->y)%map->height;
             temp = 1;
         }
     }
     else if(outPacman->dir==DIR_RIGHT){
-        if ((int)outPacman->x+1-outPacman->x<0.4){
-            a = (int) (outPacman->x+1)%map->width;
+        if ((int)outPacman->x-outPacman->x<0.3){
+            a = (int) (outPacman->x)%map->width;
             b = (int) outPacman->y;
             temp = 1;
         }
     }
     else if (outPacman->dir==DIR_LEFT){
-        if (outPacman->x-(int)outPacman->x<0.4) {
+        if (outPacman->x-(int)outPacman->x<0.3) {
             a = (int) outPacman->x;
             b = (int) outPacman->y;
             temp = 1;
@@ -116,7 +116,7 @@ void checkGhostCollision(Pacman* outPacman, Ghost* outGhost) {
     distance_y = outPacman->y - outGhost->y ;
     double distance;
     distance=sqrt((pow(distance_x,2))+(pow(distance_y,2)));
-    if (distance<0.8){
+    if (distance<0.6){
         if (outGhost->blue==1){
             outGhost->blue=0;
             outGhost->x = (double)outGhost->startX;
@@ -133,7 +133,7 @@ void checkGhostCollision(Pacman* outPacman, Ghost* outGhost) {
 bool isGameFinished(Game* game, Pacman* pacman) {
     if (game->cheeses==0 && game->pineapples==0)
         return 1;
-    else if (pacman->health==0)
+    else if (pacman->health<=0)
         return 1;
     else
         return 0;
